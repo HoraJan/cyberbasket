@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "useDefineForClassFields": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "paths": {
+      "@shared/*": ["./src/shared/*"],
+      "@api/*": ["./src/shared/api/*"],
+      "@assets/*": ["./src/shared/assets/*"],
+      "@uiComponents/*": ["./src/shared/ui-components/*"],
+      "@uiComponents": ["./src/shared/ui-components"],
+      "@marketplace/*": ["./src/marketplace/*"],
+      "@controlHub/*": ["./src/control-hub/*"],
+      "@app/*": ["./src/shared/*"]
+    },
+    "types": ["vite/client"],
+  },
+  "include": ["src", "test", "vite-env.d.ts"],
+}
