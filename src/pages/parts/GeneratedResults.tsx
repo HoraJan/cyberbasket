@@ -176,32 +176,107 @@ export const GeneratedResults = () => {
   const teamSize = 12;
   const [teamAName, setTeamAName] = useState("Team 1");
   const [teamBName, setTeamBName] = useState("Team 2");
-  const crazyNames = [
-    "Blaze Thunderpants",
-    "Rocket McBuckets",
-    "Slammin’ Jamal",
-    "Turbo Vortex",
-    "Flash “The Dash”",
-    "Ziggy Boom",
-    "Laser McSwagger",
-    "Dizzy Dunkatron",
-    "Maverick Wildfire",
-    "Juke Skywalker",
-    "Crash Lightning",
-    "Bam-Bam Bigshot",
-    "Viper Spinmaster",
-    "Funky Jetstream",
-    "Razzle Dazzle",
-    "Whizbang McFly",
-    "Snazzy Slamurai",
-    "Twister Blitz",
-    "Groovy Slamjam",
-    "Buzz “The Tower”",
-    "Frenzy Fireball",
-    "Slick Trickster",
-    "Rumble Rooster",
-    "Zappy Zinger",
+  const firstNames = [
+    "Blaze",
+    "Rocket",
+    "Jamal",
+    "Turbo",
+    "Flash",
+    "Ziggy",
+    "Laser",
+    "Dizzy",
+    "Maverick",
+    "Juke",
+    "Crash",
+    "Bam-Bam",
+    "Viper",
+    "Funky",
+    "Razzle",
+    "Whizbang",
+    "Snazzy",
+    "Twister",
+    "Groovy",
+    "Buzz",
+    "Frenzy",
+    "Slick",
+    "Rumble",
+    "Zappy",
+    "Ace",
+    "Sky",
+    "Storm",
+    "Lucky",
+    "Jazz",
+    "Spike",
+    "Dash",
+    "Mondo",
+    "Rex",
+    "Chase",
+    "Rip",
+    "Slam",
+    "Max",
+    "Bolt",
+    "Duke",
+    "Jet",
   ];
+  const lastNames = [
+    "Thunderpants",
+    "McBuckets",
+    "Wildfire",
+    "Vortex",
+    "McSwagger",
+    "Dunkatron",
+    "Spinmaster",
+    "Jetstream",
+    "Dazzle",
+    "McFly",
+    "Slamurai",
+    "Blitz",
+    "Slamjam",
+    "The Tower",
+    "Fireball",
+    "Trickster",
+    "Rooster",
+    "Zinger",
+    "Lightning",
+    "Bigshot",
+    "Skywalker",
+    "Boom",
+    "Dash",
+    "Flash",
+    "Storm",
+    "Razzle",
+    "Frenzy",
+    "Crash",
+    "Rumble",
+    "Ace",
+    "Rip",
+    "Max",
+    "Bolt",
+    "Duke",
+    "Jet",
+    "Mondo",
+    "Rex",
+    "Chase",
+    "Slam",
+    "Lucky",
+  ];
+  // Helper to generate unique names
+  const generateUniqueNames = (count: number) => {
+    const combinations = [];
+    for (let f = 0; f < firstNames.length; f++) {
+      for (let l = 0; l < lastNames.length; l++) {
+        combinations.push(`${firstNames[f]} ${lastNames[l]}`);
+      }
+    }
+    // Shuffle
+    for (let i = combinations.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = combinations[i] as string;
+      combinations[i] = combinations[j] as string;
+      combinations[j] = temp;
+    }
+    return combinations.slice(0, count);
+  };
 
   // Team state
   const [teamA, setTeamA] = useState<any[] | null>(null);
@@ -308,17 +383,32 @@ export const GeneratedResults = () => {
   };
 
   // Generate a team
-  const generateTeam = () =>
-    Array(teamSize)
+  // Generate both teams with unique names across all players
+  const generateTeams = () => {
+    const totalPlayers = teamSize * 2;
+    const uniqueNames = generateUniqueNames(totalPlayers);
+    const teamAPlayers = Array(teamSize)
       .fill(0)
       .map((_, i) => ({
         id: i + 1,
-        name: crazyNames[Math.floor(Math.random() * crazyNames.length)],
+        name: uniqueNames[i],
         stats: STATS.map(() => getIndex()),
         shoot: getShoot(),
         dunk: getDunk(),
         height: getHeight(),
       }));
+    const teamBPlayers = Array(teamSize)
+      .fill(0)
+      .map((_, i) => ({
+        id: i + 1,
+        name: uniqueNames[teamSize + i],
+        stats: STATS.map(() => getIndex()),
+        shoot: getShoot(),
+        dunk: getDunk(),
+        height: getHeight(),
+      }));
+    return { teamAPlayers, teamBPlayers };
+  };
 
   const columnStyle: React.CSSProperties = {
     flex: 1,
@@ -409,7 +499,11 @@ export const GeneratedResults = () => {
           {!teamA && (
             <button
               style={{ fontSize: 16, padding: "8px 24px" }}
-              onClick={() => setTeamA(generateTeam())}
+              onClick={() => {
+                const { teamAPlayers, teamBPlayers } = generateTeams();
+                setTeamA(teamAPlayers);
+                setTeamB(teamBPlayers);
+              }}
             >
               Generate
             </button>
@@ -606,14 +700,7 @@ export const GeneratedResults = () => {
             }}
             disabled={!!teamB}
           />
-          {!teamB && (
-            <button
-              style={{ fontSize: 16, padding: "8px 24px" }}
-              onClick={() => setTeamB(generateTeam())}
-            >
-              Generate
-            </button>
-          )}
+          {/* Remove Team 2 generate button, since both teams are generated together */}
         </div>
         {teamB && (
           <DndProvider backend={HTML5Backend}>
