@@ -372,7 +372,8 @@ export const GeneratedResults = () => {
       (currentTurn === 0 || allActions[currentTurn - 1] !== undefined)
     ) {
       const currentAction = allActions[currentTurn];
-      const prevAction = currentTurn > 0 ? allActions[currentTurn - 1] : undefined;
+      const prevAction =
+        currentTurn > 0 ? allActions[currentTurn - 1] : undefined;
       if (currentAction) {
         turnDuration = currentAction.time - (prevAction ? prevAction.time : 0);
       }
