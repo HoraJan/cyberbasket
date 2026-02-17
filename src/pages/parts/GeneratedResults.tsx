@@ -7,10 +7,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { useState, useRef, useEffect } from 'react';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import React, { useState, useRef, useEffect } from "react";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
 import { STATS } from "./Stats";
 import { norminv } from "../../utils/norminv";
@@ -54,8 +54,12 @@ function simulateGameplay(teamA?: any[], teamB?: any[]) {
     let points = 0;
     let description = "";
     // Pick a random player from each team (if available)
-    let playerA = teamAPlayers ? teamAPlayers[Math.floor(Math.random() * teamAPlayers.length)]?.name : undefined;
-    let playerB = teamBPlayers ? teamBPlayers[Math.floor(Math.random() * teamBPlayers.length)]?.name : undefined;
+    let playerA = teamAPlayers
+      ? teamAPlayers[Math.floor(Math.random() * teamAPlayers.length)]?.name
+      : undefined;
+    let playerB = teamBPlayers
+      ? teamBPlayers[Math.floor(Math.random() * teamBPlayers.length)]?.name
+      : undefined;
     if (r < 0.25) {
       type = "3pt";
       points = 3;
@@ -170,8 +174,8 @@ const getHeight = () => {
 export const GeneratedResults = () => {
   const { t } = useTranslation();
   const teamSize = 12;
-  const [teamAName, setTeamAName] = useState('Team 1');
-  const [teamBName, setTeamBName] = useState('Team 2');
+  const [teamAName, setTeamAName] = useState("Team 1");
+  const [teamBName, setTeamBName] = useState("Team 2");
   const crazyNames = [
     "Blaze Thunderpants",
     "Rocket McBuckets",
@@ -204,13 +208,13 @@ export const GeneratedResults = () => {
   const [teamB, setTeamB] = useState<any[] | null>(null);
 
   // Drag and drop logic for reordering players
-  function movePlayer(team: 'A' | 'B', dragIndex: number, hoverIndex: number) {
-    if (team === 'A' && teamA) {
+  function movePlayer(team: "A" | "B", dragIndex: number, hoverIndex: number) {
+    if (team === "A" && teamA) {
       const updated = [...teamA];
       const [removed] = updated.splice(dragIndex, 1);
       updated.splice(hoverIndex, 0, removed);
       setTeamA(updated);
-    } else if (team === 'B' && teamB) {
+    } else if (team === "B" && teamB) {
       const updated = [...teamB];
       const [removed] = updated.splice(dragIndex, 1);
       updated.splice(hoverIndex, 0, removed);
@@ -219,7 +223,13 @@ export const GeneratedResults = () => {
   }
 
   type DragItem = { index: number };
-  const DraggablePlayerRow = ({ player, index, team, movePlayer, isLastOfFive }: any) => {
+  const DraggablePlayerRow = ({
+    player,
+    index,
+    team,
+    movePlayer,
+    isLastOfFive,
+  }: any) => {
     const ref = React.useRef<HTMLTableRowElement>(null);
     // Disable DnD when simulation is running
     const isDnDEnabled = !started;
@@ -248,12 +258,17 @@ export const GeneratedResults = () => {
           ref={ref}
           style={{
             opacity: isDragging ? 0.5 : 1,
-            borderBottom: isLastOfFive ? '4px solid #333' : undefined,
-            cursor: isDnDEnabled ? 'grab' : 'not-allowed',
+            borderBottom: isLastOfFive ? "4px solid #333" : undefined,
+            cursor: isDnDEnabled ? "grab" : "not-allowed",
           }}
         >
-          <TableCell style={{ width: 32, textAlign: 'center', padding: 0 }}>
-            <DragIndicatorIcon style={{ color: isDnDEnabled ? '#888' : '#ccc', verticalAlign: 'middle' }} />
+          <TableCell style={{ width: 32, textAlign: "center", padding: 0 }}>
+            <DragIndicatorIcon
+              style={{
+                color: isDnDEnabled ? "#888" : "#ccc",
+                verticalAlign: "middle",
+              }}
+            />
           </TableCell>
           <TableCell>{player.name}</TableCell>
           {/* A, D, P, S, M order, then D (dunk), H (height) */}
@@ -308,7 +323,10 @@ export const GeneratedResults = () => {
   // State for step-by-step gameplay
   const [started, setStarted] = useState(false);
   const [currentTurn, setCurrentTurn] = useState(0);
-  const allActions = React.useMemo(() => simulateGameplay(teamA, teamB), [teamA, teamB]);
+  const allActions = React.useMemo(
+    () => simulateGameplay(teamA, teamB),
+    [teamA, teamB],
+  );
   const [actions, setActions] = useState<Action[]>([]);
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -355,18 +373,23 @@ export const GeneratedResults = () => {
     <div style={{ display: "flex", gap: 16, width: "100%" }}>
       {/* Team 1 */}
       <div style={columnStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", margin: 16 }}>
           <input
             type="text"
             value={teamAName}
-            onChange={e => setTeamAName(e.target.value)}
+            onChange={(e) => setTeamAName(e.target.value)}
             placeholder="Enter team name"
-            style={{ fontSize: 16, padding: '4px 8px', marginRight: 8, flex: 1 }}
+            style={{
+              fontSize: 16,
+              padding: "4px 8px",
+              marginRight: 8,
+              flex: 1,
+            }}
             disabled={!!teamA}
           />
           {!teamA && (
             <button
-              style={{ fontSize: 16, padding: '8px 24px' }}
+              style={{ fontSize: 16, padding: "8px 24px" }}
               onClick={() => setTeamA(generateTeam())}
             >
               Generate
@@ -386,13 +409,42 @@ export const GeneratedResults = () => {
                   <TableRow>
                     <TableCell />
                     <TableCell />
-                    <TableCell key="A" sx={{ width: 32, p: 0.5, textAlign: "center" }}>A</TableCell>
-                    <TableCell key="D" sx={{ width: 32, p: 0.5, textAlign: "center" }}>D</TableCell>
-                    <TableCell key="P" sx={{ width: 32, p: 0.5, textAlign: "center" }}>P</TableCell>
-                    <TableCell key="S" sx={{ width: 32, p: 0.5, textAlign: "center" }}>S</TableCell>
-                    <TableCell key="M" sx={{ width: 32, p: 0.5, textAlign: "center" }}>M</TableCell>
-                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>D</TableCell>
-                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>H</TableCell>
+                    <TableCell
+                      key="A"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      A
+                    </TableCell>
+                    <TableCell
+                      key="D"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      D
+                    </TableCell>
+                    <TableCell
+                      key="P"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      P
+                    </TableCell>
+                    <TableCell
+                      key="S"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      S
+                    </TableCell>
+                    <TableCell
+                      key="M"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      M
+                    </TableCell>
+                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>
+                      D
+                    </TableCell>
+                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>
+                      H
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -506,7 +558,16 @@ export const GeneratedResults = () => {
                 </TableBody>
               </Table>
               {actions.length === allActions.length && (
-                <div style={{ marginTop: 16, fontWeight: 600, fontSize: 18, color: '#388e3c' }}>Game finished</div>
+                <div
+                  style={{
+                    marginTop: 16,
+                    fontWeight: 600,
+                    fontSize: 18,
+                    color: "#388e3c",
+                  }}
+                >
+                  Game finished
+                </div>
               )}
             </>
           )}
@@ -514,18 +575,23 @@ export const GeneratedResults = () => {
       </div>
       {/* Team 2 */}
       <div style={columnStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", margin: 16 }}>
           <input
             type="text"
             value={teamBName}
-            onChange={e => setTeamBName(e.target.value)}
+            onChange={(e) => setTeamBName(e.target.value)}
             placeholder="Enter team name"
-            style={{ fontSize: 16, padding: '4px 8px', marginRight: 8, flex: 1 }}
+            style={{
+              fontSize: 16,
+              padding: "4px 8px",
+              marginRight: 8,
+              flex: 1,
+            }}
             disabled={!!teamB}
           />
           {!teamB && (
             <button
-              style={{ fontSize: 16, padding: '8px 24px' }}
+              style={{ fontSize: 16, padding: "8px 24px" }}
               onClick={() => setTeamB(generateTeam())}
             >
               Generate
@@ -544,13 +610,42 @@ export const GeneratedResults = () => {
                   </TableRow>
                   <TableRow>
                     <TableCell />
-                    <TableCell key="A" sx={{ width: 32, p: 0.5, textAlign: "center" }}>A</TableCell>
-                    <TableCell key="D" sx={{ width: 32, p: 0.5, textAlign: "center" }}>D</TableCell>
-                    <TableCell key="P" sx={{ width: 32, p: 0.5, textAlign: "center" }}>P</TableCell>
-                    <TableCell key="S" sx={{ width: 32, p: 0.5, textAlign: "center" }}>S</TableCell>
-                    <TableCell key="M" sx={{ width: 32, p: 0.5, textAlign: "center" }}>M</TableCell>
-                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>D</TableCell>
-                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>H</TableCell>
+                    <TableCell
+                      key="A"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      A
+                    </TableCell>
+                    <TableCell
+                      key="D"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      D
+                    </TableCell>
+                    <TableCell
+                      key="P"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      P
+                    </TableCell>
+                    <TableCell
+                      key="S"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      S
+                    </TableCell>
+                    <TableCell
+                      key="M"
+                      sx={{ width: 32, p: 0.5, textAlign: "center" }}
+                    >
+                      M
+                    </TableCell>
+                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>
+                      D
+                    </TableCell>
+                    <TableCell sx={{ width: 48, p: 0.5, textAlign: "center" }}>
+                      H
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
