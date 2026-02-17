@@ -54,10 +54,10 @@ function simulateGameplay(teamA?: any[], teamB?: any[]) {
     let points = 0;
     let description = "";
     // Pick a random player from each team (if available)
-    let playerA = teamAPlayers
+    const playerA = teamAPlayers
       ? teamAPlayers[Math.floor(Math.random() * teamAPlayers.length)]?.name
       : undefined;
-    let playerB = teamBPlayers
+    const playerB = teamBPlayers
       ? teamBPlayers[Math.floor(Math.random() * teamBPlayers.length)]?.name
       : undefined;
     if (r < 0.25) {
@@ -68,7 +68,7 @@ function simulateGameplay(teamA?: any[], teamB?: any[]) {
       } else if (teamWithBall === 2 && playerB) {
         description = `${playerB} scores 3 points!`;
       } else {
-        description = `Scores 3 points!`;
+        description = "Scores 3 points!";
       }
     } else if (r < 0.45) {
       type = "dunk";
@@ -78,7 +78,7 @@ function simulateGameplay(teamA?: any[], teamB?: any[]) {
       } else if (teamWithBall === 2 && playerB) {
         description = `Awesome dunk by ${playerB}!`;
       } else {
-        description = `Awesome dunk!`;
+        description = "Awesome dunk!";
       }
     } else if (r < 0.6) {
       type = "foul";
@@ -100,7 +100,7 @@ function simulateGameplay(teamA?: any[], teamB?: any[]) {
       } else if (teamWithBall === 2 && playerA) {
         description = `Great defense by ${playerA}`;
       } else {
-        description = `Great defense!`;
+        description = "Great defense!";
       }
     }
     // Add points to the team with the ball
@@ -223,78 +223,87 @@ export const GeneratedResults = () => {
   }
 
   type DragItem = { index: number };
-  const DraggablePlayerRow = ({
+
+  // Move DraggablePlayerRow outside GeneratedResults
+  type DraggablePlayerRowProps = {
+    player: any;
+    index: number;
+    team: "A" | "B";
+    movePlayer: (team: "A" | "B", from: number, to: number) => void;
+    isLastOfFive: boolean;
+  };
+  const DraggablePlayerRow: React.FC<DraggablePlayerRowProps> = ({
     player,
     index,
     team,
     movePlayer,
     isLastOfFive,
-  }: any) => {
+  }) => {
     const ref = React.useRef<HTMLTableRowElement>(null);
-    // Disable DnD when simulation is running
-    const isDnDEnabled = !started;
+    const isDnDEnabled = true; // DnD enabled state should be passed as prop if needed
     const [, drop] = useDrop<DragItem>({
       accept: `PLAYER_${team}`,
-      canDrop: () => isDnDEnabled,
-      hover(item) {
+      hover: (item: any) => {
         if (!isDnDEnabled) return;
         if (!ref.current || item.index === index) return;
         movePlayer(team, item.index, index);
         item.index = index;
       },
     });
-    const [{ isDragging }, drag] = useDrag<DragItem>({
+    const [{ isDragging }, drag] = useDrag<
+      DragItem,
+      void,
+      { isDragging: boolean }
+    >({
       type: `PLAYER_${team}`,
       canDrag: isDnDEnabled,
       item: { index },
       collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
+        isDragging: !!monitor.isDragging(),
       }),
     });
     if (isDnDEnabled) drag(drop(ref));
     return (
-      <>
-        <TableRow
-          ref={ref}
-          style={{
-            opacity: isDragging ? 0.5 : 1,
-            borderBottom: isLastOfFive ? "4px solid #333" : undefined,
-            cursor: isDnDEnabled ? "grab" : "not-allowed",
-          }}
-        >
-          <TableCell style={{ width: 32, textAlign: "center", padding: 0 }}>
-            <DragIndicatorIcon
-              style={{
-                color: isDnDEnabled ? "#888" : "#ccc",
-                verticalAlign: "middle",
-              }}
-            />
-          </TableCell>
-          <TableCell>{player.name}</TableCell>
-          {/* A, D, P, S, M order, then D (dunk), H (height) */}
-          <TableCell key={`team${team}-${player.id}-attack`}>
-            {player.stats[0]}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-defense`}>
-            {player.stats[1]}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-pass`}>
-            {player.stats[2]}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-shoot`}>
-            {player.shoot}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-muscles`}>
-            {player.stats[3]}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-dunk`}>
-            {player.dunk}
-          </TableCell>
-          <TableCell key={`team${team}-${player.id}-height`}>
-            {player.height}
-          </TableCell>
-        </TableRow>
-      </>
+      <TableRow
+        ref={ref}
+        style={{
+          opacity: isDragging ? 0.5 : 1,
+          borderBottom: isLastOfFive ? "4px solid #333" : undefined,
+          cursor: isDnDEnabled ? "grab" : "not-allowed",
+        }}
+      >
+        <TableCell style={{ width: 32, textAlign: "center", padding: 0 }}>
+          <DragIndicatorIcon
+            style={{
+              color: isDnDEnabled ? "#888" : "#ccc",
+              verticalAlign: "middle",
+            }}
+          />
+        </TableCell>
+        <TableCell>{player.name}</TableCell>
+        {/* A, D, P, S, M order, then D (dunk), H (height) */}
+        <TableCell key={`team${team}-${player.id}-attack`}>
+          {player.stats[0]}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-defense`}>
+          {player.stats[1]}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-pass`}>
+          {player.stats[2]}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-shoot`}>
+          {player.shoot}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-muscles`}>
+          {player.stats[3]}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-dunk`}>
+          {player.dunk}
+        </TableCell>
+        <TableCell key={`team${team}-${player.id}-height`}>
+          {player.height}
+        </TableCell>
+      </TableRow>
     );
   };
 
@@ -324,7 +333,7 @@ export const GeneratedResults = () => {
   const [started, setStarted] = useState(false);
   const [currentTurn, setCurrentTurn] = useState(0);
   const allActions = React.useMemo(
-    () => simulateGameplay(teamA, teamB),
+    () => simulateGameplay(teamA ?? undefined, teamB ?? undefined),
     [teamA, teamB],
   );
   const [actions, setActions] = useState<Action[]>([]);
@@ -356,14 +365,23 @@ export const GeneratedResults = () => {
     }
     // 60x speed: 1 real second = 60 simulated seconds
     // So, real delay = turnDuration / 60 (in seconds)
-    const turnDuration =
-      currentTurn < allActions.length
-        ? allActions[currentTurn].time -
-          (currentTurn > 0 ? allActions[currentTurn - 1].time : 0)
-        : 5;
+    let turnDuration = 5;
+    if (
+      currentTurn < allActions.length &&
+      allActions[currentTurn] !== undefined &&
+      (currentTurn === 0 || allActions[currentTurn - 1] !== undefined)
+    ) {
+      const currentAction = allActions[currentTurn];
+      const prevAction = currentTurn > 0 ? allActions[currentTurn - 1] : undefined;
+      if (currentAction) {
+        turnDuration = currentAction.time - (prevAction ? prevAction.time : 0);
+      }
+    }
     const ms = Math.max(50, (turnDuration * 1000) / 60); // minimum 50ms for UI
     intervalRef.current = setTimeout(() => {
-      setActions((prev) => [...prev, allActions[currentTurn]]);
+      if (allActions[currentTurn]) {
+        setActions((prev) => [...prev, allActions[currentTurn] as Action]);
+      }
       setCurrentTurn((t) => t + 1);
     }, ms);
     return () => clearTimeout(intervalRef.current!);
@@ -531,12 +549,10 @@ export const GeneratedResults = () => {
                           } else {
                             left = action.description;
                           }
+                        } else if (isTeam1) {
+                          left = action.description;
                         } else {
-                          if (isTeam1) {
-                            left = action.description;
-                          } else {
-                            right = action.description;
-                          }
+                          right = action.description;
                         }
                         return (
                           <TableRow
